@@ -1,3 +1,6 @@
+<!--
+type: feature
+-->
 # scenarios.feature
 # Синхронизированные заметки "Notes Sync"
 # Вариант 42
