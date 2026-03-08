@@ -1,0 +1,38 @@
+@startuml
+actor User
+participant "Web UI" as UI
+participant "Notes API" as API
+participant "File Storage" as FS
+database "Notes DB" as DB
+participant "Version Service" as Version
+participant "Sync Service" as Sync
+
+User -> UI: 1. Выбрать .txt файл
+UI -> UI: 2. Валидация (.txt)
+UI -> API: 3. POST /api/notes (file, metadata)
+activate API
+
+API -> FS: 4. Сохранить файл (file)
+activate FS
+FS --> API: 5. file_url
+deactivate FS
+
+API -> DB: 6. INSERT notes (user_id, file_url, title...)
+activate DB
+DB --> API: 7. note_id
+deactivate DB
+
+API -> Version: 8. POST /api/versions (note_id, file_url, comment="v1")
+activate Version
+Version --> API: 9. 201 Created
+deactivate Version
+
+API -> Sync: 10. Send event "NoteCreated" (note_id, user_id)
+activate Sync
+Sync --> API: 11. Event accepted
+deactivate Sync
+
+API --> UI: 12. 201 Created, note_id
+deactivate API
+UI --> User: 13. Показать сообщение "Заметка создана и поставлена в очередь на синхронизацию"
+@enduml

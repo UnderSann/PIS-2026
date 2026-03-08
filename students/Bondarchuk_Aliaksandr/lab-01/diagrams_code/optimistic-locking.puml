@@ -1,0 +1,27 @@
+@startuml
+actor User
+participant "Browser (Laptop)" as Laptop
+participant "Notes API" as API
+database "DB" as DB
+
+User -> Laptop: Редактирует и нажимает "Сохранить"
+Laptop -> API: PUT /notes/1 (data, version=5)
+activate API
+
+API -> DB: UPDATE notes SET ... WHERE id=1 AND version=5
+DB --> API: (rows updated = 0)
+
+alt Обновление не удалось
+    API -> API: Обнаружен конфликт версий
+    API -> DB: SELECT * FROM notes WHERE id=1
+    DB --> API: (note with version=6)
+    API --> Laptop: 409 Conflict + актуальная версия
+    deactivate API
+    Laptop --> User: Показать диалог конфликта
+else Успешное обновление
+    DB --> API: (rows updated = 1)
+    API --> Laptop: 200 OK
+    deactivate API
+    Laptop --> User: Показать успех
+end
+@enduml

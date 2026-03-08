@@ -1,0 +1,48 @@
+@startuml
+actor User
+participant "Web UI" as UI
+participant "Notes API" as API
+participant "File Storage" as FS
+database "Notes DB" as DB
+participant "Version Service" as Version
+participant "Retry Queue" as Queue
+
+User -> UI: Выбрать .txt файл
+UI -> API: POST /api/notes (file)
+activate API
+
+API -> FS: Сохранить файл (file)
+activate FS
+FS --> API: file_url
+deactivate FS
+
+API -> DB: INSERT notes
+activate DB
+DB --> API: note_id
+deactivate DB
+
+API -> Version: POST /api/versions (note_id)
+activate Version
+
+note over Version: Version Service Timeout!
+Version --> API: TimeoutException
+deactivate Version
+
+alt Компенсирующее действие
+    API -> DB: UPDATE notes SET versioning_pending = true WHERE id = note_id
+    activate DB
+    DB --> API: OK
+    deactivate DB
+
+    API -> Queue: Send message {noteId: note_id, retryCount: 0}
+    activate Queue
+    Queue --> API: Message accepted
+    deactivate Queue
+
+    API --> UI: 201 Created, warning: "Note saved, versioning queued"
+    deactivate API
+    UI --> User: Сообщение: "Заметка сохранена, но история версий будет доступна позже."
+else Критическая ошибка (не используется в этом сценарии)
+    note right: Здесь мог бы быть откат,\nно мы решили не терять данные пользователя.
+end
+@enduml
