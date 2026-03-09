@@ -1,0 +1,29 @@
+@startuml
+title Note Service - слои архитектуры
+
+skinparam componentStyle rectangle
+skinparam backgroundColor #FEFEFE
+
+package "Infrastructure Layer" #F5F5F5 {
+  component "REST\nController" <<Controller>> as controller
+  component "PostgreSQL\nNoteRepository" <<Repository>> as repository
+}
+
+package "Application Layer" #E8F5E8 {
+  component "NoteService" <<Service>> as service
+}
+
+package "Domain Layer" #FFECB3 {
+  component "Note" <<Entity>> as note
+}
+
+' Связи между слоями
+controller --> service : вызывает
+service --> repository : использует
+service ..> note : создаёт/изменяет
+
+' Внешние зависимости
+database "PostgreSQL" as db <<DB>>
+repository --> db : SQL
+
+@enduml
