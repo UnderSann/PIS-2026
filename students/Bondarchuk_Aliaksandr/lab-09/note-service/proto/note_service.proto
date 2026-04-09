@@ -1,0 +1,99 @@
+syntax = "proto3";
+
+package notesync;
+
+service NoteService {
+  // Унарные RPC
+  rpc CreateNote(CreateNoteRequest) returns (CreateNoteResponse);
+  rpc GetNote(GetNoteRequest) returns (Note);
+  rpc UpdateNote(UpdateNoteRequest) returns (UpdateNoteResponse);
+  rpc DeleteNote(DeleteNoteRequest) returns (DeleteNoteResponse);
+  
+  // Server-side streaming для real-time обновлений
+  rpc StreamNotesByOwner(StreamNotesRequest) returns (stream NoteUpdate);
+  
+  // Client-side streaming для синхронизации
+  rpc SyncNotes(stream NoteOperation) returns (SyncResponse);
+}
+
+// --- Сообщения для заметок ---
+message Note {
+  string id = 1;
+  string owner_id = 2;
+  string title = 3;
+  string content = 4;
+  int32 version = 5;
+  bool is_deleted = 6;
+  string created_at = 7;
+  string updated_at = 8;
+}
+
+// --- Create Note ---
+message CreateNoteRequest {
+  string owner_id = 1;
+  string title = 2;
+  string content = 3;
+}
+
+message CreateNoteResponse {
+  string id = 1;
+  int32 version = 2;
+}
+
+// --- Get Note ---
+message GetNoteRequest {
+  string id = 1;
+}
+
+// --- Update Note ---
+message UpdateNoteRequest {
+  string id = 1;
+  string content = 2;
+  int32 expected_version = 3; // Оптимистичная блокировка
+}
+
+message UpdateNoteResponse {
+  int32 new_version = 1;
+}
+
+// --- Delete Note ---
+message DeleteNoteRequest {
+  string id = 1;
+}
+
+message DeleteNoteResponse {
+  bool success = 1;
+}
+
+// --- Streaming ---
+message StreamNotesRequest {
+  string owner_id = 1;
+  int32 since_version = 2; // Версия, начиная с которой нужны обновления
+}
+
+message NoteUpdate {
+  enum OperationType {
+    CREATED = 0;
+    UPDATED = 1;
+    DELETED = 2;
+  }
+  OperationType operation = 1;
+  Note note = 2;
+  int64 timestamp = 3;
+}
+
+// --- Client-side streaming для синхронизации ---
+message NoteOperation {
+  string operation_id = 1;
+  oneof operation {
+    CreateNoteRequest create = 2;
+    UpdateNoteRequest update = 3;
+    DeleteNoteRequest delete = 4;
+  }
+}
+
+message SyncResponse {
+  string sync_id = 1;
+  int32 processed_count = 2;
+  repeated string failed_operation_ids = 3;
+}
