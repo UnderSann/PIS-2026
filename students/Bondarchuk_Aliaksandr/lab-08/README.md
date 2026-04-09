@@ -54,6 +54,7 @@ class Note {
     this.events = [new NoteCreatedEvent(this)];
   }
 
+ 
   updateContent(newContent) {
     if (this.isDeleted) {
       throw new Error('Cannot update a deleted note');
@@ -443,9 +444,9 @@ $ npm test -- --testPathPattern=projection
 
  PASS  tests/unit/projection/note_projection.test.js
   NoteProjection
-    ✓ onNoteCreated should upsert NoteView (5 ms)
-    ✓ onNoteContentUpdated should update existing NoteView (3 ms)
-    ✓ onNoteDeleted should mark as deleted (2 ms)
+    onNoteCreated should upsert NoteView (5 ms)
+    onNoteContentUpdated should update existing NoteView (3 ms)
+    onNoteDeleted should mark as deleted (2 ms)
 
 Test Suites: 1 passed, 1 total
 Tests:       3 passed, 3 total
