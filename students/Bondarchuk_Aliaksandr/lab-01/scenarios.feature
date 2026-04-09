@@ -1,6 +1,10 @@
+<<<<<<< HEAD
 <!--
 type: feature
 -->
+=======
+
+>>>>>>> lab02-po13-bondarchuk
 # scenarios.feature
 # Синхронизированные заметки "Notes Sync"
 # Вариант 42
