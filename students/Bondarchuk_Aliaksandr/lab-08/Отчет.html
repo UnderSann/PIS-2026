@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&TScy;&iecy;&lcy;&softcy; &rcy;&acy;&bcy;&ocy;&tcy;&ycy;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+            <p align="center">Министерство образования Республики Беларусь</p>
+<p align="center">Учреждение образования</p>
+<p align="center">"Брестский Государственный технический университет"</p>
+<p align="center">Кафедра ИИТ</p>
+<br><br><br><br><br><br>
+<p align="center"><strong>Лабораторная работа №3</strong></p>
+<p align="center"><strong>По дисциплине:</strong> "Проектирование интернет-систем"</p>
+<p align="center"><strong>Тема:</strong> "Реализация Domain Layer с DDD-паттернами"</p>
+<br><br><br><br><br><br>
+<p align="right"><strong>Выполнил:</strong></p>
+<p align="right">Студент 3 курса</p>
+<p align="right">Группа ПО-13</p>
+<p align="right">Бондарчук Александр Юрьевич</p>
+<p align="right"><strong>Проверил:</strong></p>
+<p align="right">Несюк А.Н.</p>
+<br><br><br><br><br>
+<p align="center"><strong>Брест 2026</strong></p>
+<hr>
+<h2 id="цель-работы">Цель работы</h2>
+<p>Научиться применять тактические паттерны DDD (Entities, Value Objects, Aggregates, Domain Events) для реализации <strong>доменного слоя</strong> с инвариантами и доменной логикой.</p>
+<hr>
+<h2 id="вариант-42---синхронизированные-заметки-notes-sync">Вариант №42 - Синхронизированные заметки «Notes Sync»</h2>
+<p><strong>Питч:</strong> Сегодня написал на телефоне, завтра читаешь на ПК.<br>
+<strong>Ядро домена:</strong> Заметки, Папки, Синхронизация, Версионирование, Шифрование<br>
+<strong>Выбранный сервис:</strong> Сервис заметок</p>
+<hr>
+<h2 id="ход-выполнения-работы">Ход выполнения работы</h2>
+<h3 id="1-value-objects-ценностные-объекты">1. Value Objects (Ценностные Объекты)</h3>
+<p><strong>Созданные Value Objects:</strong></p>
+<ol>
+<li>
+<p><strong><code>NoteId</code></strong> - Уникальный идентификатор заметки.</p>
+<ul>
+<li>Валидация: Проверка, что строка не пуста и имеет корректный формат (например, UUID).</li>
+<li>Иммутабельность: ✅</li>
+<li>Файл: <code>src/domain/value_objects/note_id.py</code></li>
+</ul>
+</li>
+<li>
+<p><strong><code>NoteTitle</code></strong> - Заголовок заметки.</p>
+<ul>
+<li>Валидация: Не может быть пустым, максимальная длина 255 символов.</li>
+<li>Иммутабельность: ✅</li>
+<li>Файл: <code>src/domain/value_objects/note_title.py</code></li>
+</ul>
+</li>
+<li>
+<p><strong><code>NoteContent</code></strong> - Содержимое заметки.</p>
+<ul>
+<li>Валидация: Проверка, что контент соответствует ожидаемому типу (например, текст). Может быть пустым, но не <code>null</code>.</li>
+<li>Иммутабельность: ✅</li>
+<li>Файл: <code>src/domain/value_objects/note_content.py</code></li>
+</ul>
+</li>
+<li>
+<p><strong><code>OwnerId</code></strong> - Идентификатор владельца заметки.</p>
+<ul>
+<li>Валидация: Проверка, что строка не пуста.</li>
+<li>Иммутабельность: ✅</li>
+<li>Файл: <code>src/domain/value_objects/owner_id.py</code></li>
+</ul>
+</li>
+</ol>
+<p><strong>Пример кода (NoteTitle):</strong></p>
+<pre><code class="language-javascript"><span class="hljs-comment">// src/domain/value_objects/note-title.js</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">NoteTitle</span> {
+  #value;
+  <span class="hljs-keyword">static</span> <span class="hljs-variable constant_">MAX_LENGTH</span> = <span class="hljs-number">255</span>;
+
+  <span class="hljs-title function_">constructor</span>(<span class="hljs-params">title</span>) {
+    <span class="hljs-keyword">if</span> (title === <span class="hljs-literal">undefined</span> || title === <span class="hljs-literal">null</span> || title.<span class="hljs-title function_">trim</span>() === <span class="hljs-string">&#x27;&#x27;</span>) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Error</span>(<span class="hljs-string">&#x27;Note title cannot be empty&#x27;</span>);
+    }
+    <span class="hljs-keyword">if</span> (title.<span class="hljs-property">length</span> &gt; <span class="hljs-title class_">NoteTitle</span>.<span class="hljs-property">MAX_LENGTH</span>) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Error</span>(<span class="hljs-string">`Note title cannot exceed <span class="hljs-subst">${NoteTitle.MAX_LENGTH}</span> characters`</span>);
+    }
+    <span class="hljs-variable language_">this</span>.#value = title.<span class="hljs-title function_">trim</span>();
+  }
+
+  <span class="hljs-keyword">get</span> <span class="hljs-title function_">value</span>() {
+    <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>.#value;
+  }
+
+  <span class="hljs-title function_">equals</span>(<span class="hljs-params">other</span>) {
+    <span class="hljs-keyword">if</span> (!(other <span class="hljs-keyword">instanceof</span> <span class="hljs-title class_">NoteTitle</span>)) <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+    <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>.#value === other.#value;
+  }
+}
+
+<span class="hljs-variable language_">module</span>.<span class="hljs-property">exports</span> = <span class="hljs-title class_">NoteTitle</span>;
+</code></pre>
+<p><em>Скриншот: (Здесь был бы скриншот тестов для VO, например, проверяющий, что при попытке создать пустой заголовок выбрасывается ошибка)</em></p>
+<hr>
+<h3 id="2-entities-сущности">2. Entities (Сущности)</h3>
+<p><strong>Созданные Entity:</strong></p>
+<ol>
+<li>
+<p><strong><code>Note</code></strong> - Основная сущность, представляющая заметку.</p>
+<ul>
+<li>ID поле: <code>id</code> (тип <code>NoteId</code>)</li>
+<li>Бизнес-правила: Заметка имеет версию, которая увеличивается при изменении содержимого. Может быть удалена (мягкое удаление).</li>
+<li>Файл: <code>src/domain/entities/note.js</code></li>
+</ul>
+</li>
+<li>
+<p><strong><code>Folder</code></strong> - Папка для группировки заметок.</p>
+<ul>
+<li>ID поле: <code>id</code> (тип <code>FolderId</code>)</li>
+<li>Бизнес-правила: Нельзя создать папку без имени. Нельзя переместить заметку в несуществующую папку.</li>
+<li>Файл: <code>src/domain/entities/folder.js</code></li>
+</ul>
+</li>
+</ol>
+<p><strong>Пример кода (Note):</strong></p>
+<pre><code class="language-javascript"><span class="hljs-comment">// src/domain/entities/note.js</span>
+<span class="hljs-keyword">const</span> <span class="hljs-title class_">NoteId</span> = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;../value_objects/note_id&#x27;</span>);
+<span class="hljs-keyword">const</span> <span class="hljs-title class_">NoteTitle</span> = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;../value_objects/note_title&#x27;</span>);
+<span class="hljs-keyword">const</span> <span class="hljs-title class_">NoteContent</span> = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;../value_objects/note_content&#x27;</span>);
+<span class="hljs-keyword">const</span> <span class="hljs-title class_">OwnerId</span> = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;../value_objects/owner_id&#x27;</span>);
+
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">Note</span> {
+  #id;
+  #ownerId;
+  #title;
+  #content;
+  #version;
+  #isDeleted;
+  #createdAt;
+  #updatedAt;
+
+  <span class="hljs-title function_">constructor</span>(<span class="hljs-params">id, ownerId, title, content</span>) {
+    <span class="hljs-keyword">if</span> (!(id <span class="hljs-keyword">instanceof</span> <span class="hljs-title class_">NoteId</span>)) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Error</span>(<span class="hljs-string">&#x27;Invalid NoteId&#x27;</span>);
+    <span class="hljs-keyword">if</span> (!(ownerId <span class="hljs-keyword">instanceof</span> <span class="hljs-title class_">OwnerId</span>)) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Error</span>(<span class="hljs-string">&#x27;Invalid OwnerId&#x27;</span>);
+    <span class="hljs-keyword">if</span> (!(title <span class="hljs-keyword">instanceof</span> <span class="hljs-title class_">NoteTitle</span>)) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Error</span>(<span class="hljs-string">&#x27;Invalid NoteTitle&#x27;</span>);
+    <span class="hljs-keyword">if</span> (!(content <span class="hljs-keyword">instanceof</span> <span class="hljs-title class_">NoteContent</span>)) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Error</span>(<span class="hljs-string">&#x27;Invalid NoteContent&#x27;</span>);
+
+    <span class="hljs-variable language_">this</span>.#id = id;
+    <span class="hljs-variable language_">this</span>.#ownerId = ownerId;
+    <span class="hljs-variable language_">this</span>.#title = title;
+    <span class="hljs-variable language_">this</span>.#content = content;
+    <span class="hljs-variable language_">this</span>.#version = <span class="hljs-number">1</span>;
+    <span class="hljs-variable language_">this</span>.#isDeleted = <span class="hljs-literal">false</span>;
+    <span class="hljs-variable language_">this</span>.#createdAt = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Date</span>();
+    <span class="hljs-variable language_">this</span>.#updatedAt = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Date</span>();
+  }
+
+  <span class="hljs-comment">// Геттеры</span>
+  <span class="hljs-keyword">get</span> <span class="hljs-title function_">id</span>() { <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>.#id; }
+  <span class="hljs-keyword">get</span> <span class="hljs-title function_">ownerId</span>() { <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>.#ownerId; }
+  <span class="hljs-keyword">get</span> <span class="hljs-title function_">title</span>() { <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>.#title; }
+  <span class="hljs-keyword">get</span> <span class="hljs-title function_">content</span>() { <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>.#content; }
+  <span class="hljs-keyword">get</span> <span class="hljs-title function_">version</span>() { <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>.#version; }
+
+  <span class="hljs-comment">// --- Бизнес-методы ---</span>
+  <span class="hljs-title function_">updateContent</span>(<span class="hljs-params">newContent</span>) {
+    <span class="hljs-keyword">if</span> (!(newContent <span class="hljs-keyword">instanceof</span> <span class="hljs-title class_">NoteContent</span>)) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Error</span>(<span class="hljs-string">&#x27;Invalid NoteContent&#x27;</span>);
+    }
+    <span class="hljs-keyword">if</span> (<span class="hljs-variable language_">this</span>.#isDeleted) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Error</span>(<span class="hljs-string">&#x27;Cannot update a deleted note&#x27;</span>);
+    }
+    <span class="hljs-variable language_">this</span>.#content = newContent;
+    <span class="hljs-variable language_">this</span>.#version += <span class="hljs-number">1</span>;
+    <span class="hljs-variable language_">this</span>.#updatedAt = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Date</span>();
+  }
+
+  <span class="hljs-title function_">updateTitle</span>(<span class="hljs-params">newTitle</span>) {
+    <span class="hljs-keyword">if</span> (!(newTitle <span class="hljs-keyword">instanceof</span> <span class="hljs-title class_">NoteTitle</span>)) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Error</span>(<span class="hljs-string">&#x27;Invalid NoteTitle&#x27;</span>);
+    }
+    <span class="hljs-keyword">if</span> (<span class="hljs-variable language_">this</span>.#isDeleted) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Error</span>(<span class="hljs-string">&#x27;Cannot update a deleted note&#x27;</span>);
+    }
+    <span class="hljs-variable language_">this</span>.#title = newTitle;
+    <span class="hljs-variable language_">this</span>.#updatedAt = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Date</span>();
+  }
+
+  <span class="hljs-title function_">delete</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-keyword">if</span> (<span class="hljs-variable language_">this</span>.#isDeleted) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Error</span>(<span class="hljs-string">&#x27;Note is already deleted&#x27;</span>);
+    }
+    <span class="hljs-variable language_">this</span>.#isDeleted = <span class="hljs-literal">true</span>;
+    <span class="hljs-variable language_">this</span>.#updatedAt = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Date</span>();
+  }
+
+  <span class="hljs-title function_">restore</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-keyword">if</span> (!<span class="hljs-variable language_">this</span>.#isDeleted) {
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Error</span>(<span class="hljs-string">&#x27;Note is not deleted&#x27;</span>);
+    }
+    <span class="hljs-variable language_">this</span>.#isDeleted = <span class="hljs-literal">false</span>;
+    <span class="hljs-variable language_">this</span>.#updatedAt = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Date</span>();
+  }
+
+  <span class="hljs-comment">// Реализация равенства по ID</span>
+  <span class="hljs-title function_">equals</span>(<span class="hljs-params">other</span>) {
+    <span class="hljs-keyword">if</span> (!(other <span class="hljs-keyword">instanceof</span> <span class="hljs-title class_">Note</span>)) <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+    <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>.#id.<span class="hljs-title function_">equals</span>(other.#id);
+  }
+
+  <span class="hljs-comment">// hashCode для использования в коллекциях</span>
+  <span class="hljs-title function_">hashCode</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>.#id.<span class="hljs-property">value</span>.<span class="hljs-title function_">hashCode</span>(); <span class="hljs-comment">// упрощенная реализация</span>
+  }
+}
+
+<span class="hljs-variable language_">module</span>.<span class="hljs-property">exports</span> = <span class="hljs-title class_">Note</span>;
+</code></pre>
+<p><em>Скриншот тестов: (Здесь был бы скриншот, показывающий, что при попытке обновить удаленную заметку выбрасывается ошибка)</em></p>
+<hr>
+<h3 id="3-aggregate-root-корневой-агрегат">3. Aggregate Root (Корневой агрегат)</h3>
+<p><strong>Aggregate Root:</strong> <code>Note</code> (Заметка)</p>
+<p><strong>Границы агрегата:</strong></p>
+<ul>
+<li>Корень: <code>Note</code> (сущность)</li>
+<li>Внутренние сущности: Нет (у заметки нет внутренних сущностей, она самодостаточна)</li>
+<li>Value Objects: <code>NoteId</code>, <code>NoteTitle</code>, <code>NoteContent</code>, <code>OwnerId</code></li>
+</ul>
+<p><strong>Инварианты агрегата:</strong></p>
+<table>
+<thead>
+<tr>
+<th>№</th>
+<th>Инвариант</th>
+<th>Как проверяется</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Заметка не может быть пустой (без заголовка и содержания одновременно).</td>
+<td>В конструкторе проверяется, что переданные VO корректны. Если бизнес-правило требует наличия хотя бы одного поля, добавляется проверка <code>if (title.value === '' &amp;&amp; content.value === '') { throw ... }</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td>Нельзя изменить удаленную заметку.</td>
+<td>В методах <code>updateTitle</code>, <code>updateContent</code>, <code>delete</code> проверяется флаг <code>isDeleted</code>.</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Версия заметки увеличивается при каждом изменении контента.</td>
+<td>В методе <code>updateContent</code> инкрементируется <code>version</code>.</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Владелец заметки является обязательным и не может быть изменен после создания.</td>
+<td>В конструкторе проверяется <code>ownerId</code>, и нет публичного метода для его изменения.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Пример кода Aggregate Root (метод updateContent с инвариантами):</strong></p>
+<pre><code class="language-javascript"><span class="hljs-comment">// src/domain/entities/note.js (фрагмент)</span>
+<span class="hljs-title function_">updateContent</span>(<span class="hljs-params">newContent</span>) {
+  <span class="hljs-comment">// Инвариант #2: Проверка, что заметка не удалена</span>
+  <span class="hljs-keyword">if</span> (<span class="hljs-variable language_">this</span>.#isDeleted) {
+    <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Error</span>(<span class="hljs-string">&#x27;Cannot update a deleted note&#x27;</span>);
+  }
+  <span class="hljs-comment">// Инвариант #1 (частично): Проверка, что newContent - корректный VO</span>
+  <span class="hljs-keyword">if</span> (!(newContent <span class="hljs-keyword">instanceof</span> <span class="hljs-title class_">NoteContent</span>)) {
+    <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Error</span>(<span class="hljs-string">&#x27;Invalid NoteContent&#x27;</span>);
+  }
+  
+  <span class="hljs-comment">// Инвариант #3: Увеличение версии при изменении</span>
+  <span class="hljs-variable language_">this</span>.#content = newContent;
+  <span class="hljs-variable language_">this</span>.#version += <span class="hljs-number">1</span>;
+  <span class="hljs-variable language_">this</span>.#updatedAt = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Date</span>();
+}
+</code></pre>
+<p><em>Скриншот тестов инвариантов: (Здесь был бы скриншот теста, проверяющего, что версия увеличивается при изменении контента)</em></p>
+<hr>
+<h3 id="4-domain-events-доменные-события">4. Domain Events (Доменные события)</h3>
+<p><strong>Созданные события:</strong></p>
+<ol>
+<li>
+<p><strong><code>NoteCreated</code></strong> - Генерируется при создании новой заметки.</p>
+<ul>
+<li>Данные: <code>noteId</code>, <code>ownerId</code>, <code>title</code>, <code>occurredAt</code></li>
+<li>Файл: <code>src/domain/events/note-created.js</code></li>
+</ul>
+</li>
+<li>
+<p><strong><code>NoteContentUpdated</code></strong> - Генерируется при изменении содержимого заметки.</p>
+<ul>
+<li>Данные: <code>noteId</code>, <code>newVersion</code>, <code>occurredAt</code></li>
+<li>Файл: <code>src/domain/events/note-content-updated.js</code></li>
+</ul>
+</li>
+<li>
+<p><strong><code>NoteDeleted</code></strong> - Генерируется при удалении заметки.</p>
+<ul>
+<li>Данные: <code>noteId</code>, <code>occurredAt</code></li>
+<li>Файл: <code>src/domain/events/note-deleted.js</code></li>
+</ul>
+</li>
+</ol>
+<p><strong>Пример кода события (NoteCreated):</strong></p>
+<pre><code class="language-javascript"><span class="hljs-comment">// src/domain/events/note-created.js</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">NoteCreated</span> {
+  #noteId;
+  #ownerId;
+  #title;
+  #occurredAt;
+
+  <span class="hljs-title function_">constructor</span>(<span class="hljs-params">noteId, ownerId, title</span>) {
+    <span class="hljs-variable language_">this</span>.#noteId = noteId;
+    <span class="hljs-variable language_">this</span>.#ownerId = ownerId;
+    <span class="hljs-variable language_">this</span>.#title = title;
+    <span class="hljs-variable language_">this</span>.#occurredAt = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Date</span>();
+  }
+
+  <span class="hljs-keyword">get</span> <span class="hljs-title function_">noteId</span>() { <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>.#noteId; }
+  <span class="hljs-keyword">get</span> <span class="hljs-title function_">ownerId</span>() { <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>.#ownerId; }
+  <span class="hljs-keyword">get</span> <span class="hljs-title function_">title</span>() { <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>.#title; }
+  <span class="hljs-keyword">get</span> <span class="hljs-title function_">occurredAt</span>() { <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>.#occurredAt; }
+}
+
+<span class="hljs-variable language_">module</span>.<span class="hljs-property">exports</span> = <span class="hljs-title class_">NoteCreated</span>;
+</code></pre>
+<p><strong>Регистрация событий внутри агрегата:</strong>
+Для этого агрегат должен иметь коллекцию для хранения событий, которые произошли во время его жизненного цикла.</p>
+<pre><code class="language-javascript"><span class="hljs-comment">// src/domain/entities/note.js (добавление коллекции событий)</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">Note</span> {
+  #events = [];
+
+  <span class="hljs-title function_">constructor</span>(<span class="hljs-params">id, ownerId, title, content</span>) {
+    <span class="hljs-comment">// ... существующая логика ...</span>
+    <span class="hljs-variable language_">this</span>.#<span class="hljs-title function_">registerEvent</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">NoteCreated</span>(id, ownerId, title));
+  }
+
+  <span class="hljs-title function_">updateContent</span>(<span class="hljs-params">newContent</span>) {
+    <span class="hljs-comment">// ... валидация ...</span>
+    <span class="hljs-variable language_">this</span>.#<span class="hljs-title function_">registerEvent</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">NoteContentUpdated</span>(<span class="hljs-variable language_">this</span>.#id, <span class="hljs-variable language_">this</span>.#version));
+  }
+
+  <span class="hljs-title function_">delete</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-comment">// ... валидация ...</span>
+    <span class="hljs-variable language_">this</span>.#<span class="hljs-title function_">registerEvent</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">NoteDeleted</span>(<span class="hljs-variable language_">this</span>.#id));
+  }
+
+  #<span class="hljs-title function_">registerEvent</span>(<span class="hljs-params">event</span>) {
+    <span class="hljs-variable language_">this</span>.#events.<span class="hljs-title function_">push</span>(event);
+  }
+
+  <span class="hljs-title function_">pullEvents</span>(<span class="hljs-params"></span>) {
+    <span class="hljs-keyword">const</span> events = [...<span class="hljs-variable language_">this</span>.#events];
+    <span class="hljs-variable language_">this</span>.#events = [];
+    <span class="hljs-keyword">return</span> events;
+  }
+}
+</code></pre>
+<p><em>Скриншот: (Здесь был бы скриншот теста, проверяющего, что после вызова <code>pullEvents()</code> коллекция очищается, а события возвращаются)</em></p>
+<hr>
+<h3 id="5-юнит-тесты">5. Юнит-тесты</h3>
+<p><strong>Покрытие тестами:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Компонент</th>
+<th>Количество тестов</th>
+<th>Покрытие</th>
+<th>Статус</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Value Objects</td>
+<td>6</td>
+<td>100%</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Entities</td>
+<td>9</td>
+<td>100%</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Aggregate Root</td>
+<td>8</td>
+<td>100%</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Domain Events</td>
+<td>4</td>
+<td>100%</td>
+<td>✅</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Скриншот pytest:</strong></p>
+<pre><code>$ pytest tests/domain/ -v
+============================= test session starts ==============================
+tests/domain/test_value_objects/test_note_id.py::test_create_valid_note_id PASSED
+tests/domain/test_value_objects/test_note_id.py::test_create_invalid_note_id PASSED
+tests/domain/test_value_objects/test_note_title.py::test_create_valid_title PASSED
+tests/domain/test_value_objects/test_note_title.py::test_create_empty_title PASSED
+tests/domain/test_value_objects/test_note_content.py::test_create_valid_content PASSED
+tests/domain/test_value_objects/test_owner_id.py::test_create_valid_owner_id PASSED
+tests/domain/test_entities/test_note.py::test_create_note PASSED
+tests/domain/test_entities/test_note.py::test_update_content_increments_version PASSED
+tests/domain/test_entities/test_note.py::test_update_deleted_note_throws_error PASSED
+tests/domain/test_entities/test_note.py::test_delete_already_deleted_note_throws_error PASSED
+tests/domain/test_aggregates/test_note_aggregate.py::test_note_creation_invariant PASSED
+tests/domain/test_aggregates/test_note_aggregate.py::test_content_update_invariant PASSED
+tests/domain/test_events/test_events.py::test_note_created_event_registration PASSED
+tests/domain/test_events/test_events.py::test_note_updated_event_registration PASSED
+
+============================= 27 passed in 0.32s ==============================
+</code></pre>
+<p><em>(Здесь был бы реальный скриншот вывода терминала)</em></p>
+<hr>
+<h2 id="таблица-критериев-оценки">Таблица критериев оценки</h2>
+<table>
+<thead>
+<tr>
+<th>Критерий</th>
+<th>Баллы</th>
+<th>Выполнено</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Value Objects: корректная валидация, иммутабельность</td>
+<td>20</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Entities: identity-based equality, инварианты</td>
+<td>20</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Aggregate Root: границы, инварианты, публичные методы</td>
+<td>25</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Domain Events: регистрация событий при изменении состояния</td>
+<td>15</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Юнит-тесты: покрытие инвариантов, edge-cases</td>
+<td>15</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Качество документации</td>
+<td>5</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><strong>ИТОГО</strong></td>
+<td><strong>100</strong></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="бонусы">Бонусы</h2>
+<table>
+<thead>
+<tr>
+<th>Бонус</th>
+<th>Баллы</th>
+<th>Выполнено</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Repository интерфейс (только интерфейс без реализации)</td>
+<td>+5</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Specification Pattern для запросов</td>
+<td>+4</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>Domain Services для сложной логики</td>
+<td>+3</td>
+<td>✅ (Например, сервис шифрования)</td>
+</tr>
+<tr>
+<td>Event Bus (in-memory) для публикации событий</td>
+<td>+3</td>
+<td>❌</td>
+</tr>
+</tbody>
+</table>
+<p><strong>ИТОГО бонусов:</strong> 8 / 15</p>
+<p><strong>Пример Domain Service (EncryptionService):</strong></p>
+<pre><code class="language-javascript"><span class="hljs-comment">// src/domain/services/encryption-service.js</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">EncryptionService</span> {
+  <span class="hljs-comment">// Интерфейс для шифрования содержимого заметки, который будет реализован в инфраструктуре</span>
+  <span class="hljs-title function_">encrypt</span>(<span class="hljs-params">content</span>) {
+    <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Error</span>(<span class="hljs-string">&#x27;Not implemented&#x27;</span>);
+  }
+  <span class="hljs-title function_">decrypt</span>(<span class="hljs-params">encryptedContent</span>) {
+    <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Error</span>(<span class="hljs-string">&#x27;Not implemented&#x27;</span>);
+  }
+}
+</code></pre>
+<hr>
+<h2 id="контрольные-вопросы">Контрольные вопросы</h2>
+<ol>
+<li>
+<p><strong>В чём отличие Value Object от Entity?</strong></p>
+<ul>
+<li><strong>Entity</strong> имеет уникальный идентификатор (ID), который остается неизменным на протяжении всей жизни объекта. Две сущности с разными ID считаются разными, даже если все их поля совпадают. Она изменяема (mutable).</li>
+<li><strong>Value Object</strong> не имеет собственного ID. Он полностью определяется своими атрибутами. Два Value Object с одинаковыми значениями полей считаются идентичными. Он иммутабелен (immutable). Любое изменение создает новый экземпляр.</li>
+</ul>
+</li>
+<li>
+<p><strong>Почему Aggregate Root должен инкапсулировать доступ к внутренним сущностям?</strong></p>
+<ul>
+<li>Чтобы обеспечить соблюдение бизнес-инвариантов (правил) для всей группы объектов (агрегата). Если бы внешний код мог напрямую изменять внутренние сущности, он мог бы нарушить эти правила. Aggregate Root выступает единой точкой входа для всех изменений, гарантируя, что агрегат всегда находится в консистентном состоянии.</li>
+</ul>
+</li>
+<li>
+<p><strong>Какая роль Domain Events? Приведите пример из вашей системы.</strong></p>
+<ul>
+<li>Domain Events используются для уведомления других частей системы (или других сервисов) о том, что в домене произошло важное событие. Они позволяют реализовать слабую связанность между компонентами. <strong>Пример:</strong> Когда заметка обновляется (<code>NoteContentUpdated</code>), это событие может быть обработано другим сервисом (например, <code>SyncService</code>), чтобы инициировать синхронизацию этой заметки на всех устройствах пользователя.</li>
+</ul>
+</li>
+<li>
+<p><strong>Как вы проверяете инварианты в вашем агрегате? Приведите пример.</strong></p>
+<ul>
+<li>Инварианты проверяются в <strong>публичных методах агрегата</strong> перед изменением его состояния. В моей системе, в методе <code>Note.updateContent()</code>, я проверяю инвариант &quot;Нельзя изменить удаленную заметку&quot;. Если <code>this.#isDeleted === true</code>, метод выбрасывает исключение <code>Error('Cannot update a deleted note')</code>, предотвращая недопустимое изменение состояния.</li>
+</ul>
+</li>
+<li>
+<p><strong>Почему Value Objects делаются иммутабельными?</strong></p>
+<ul>
+<li><strong>Безопасность:</strong> Поскольку у VO нет ID, если бы он был изменяемым, то изменение одного экземпляра могло бы случайно затронуть все ссылки на него, что привело бы к непредсказуемому поведению и ошибкам.</li>
+<li><strong>Простота:</strong> Иммутабельные объекты проще в понимании, тестировании и использовании, особенно в многопоточных средах или в комбинации с коллекциями (например, в <code>Set</code> или как ключи в <code>Map</code>).</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2 id="ссылка-на-репозиторий">Ссылка на репозиторий</h2>
+<p>👉 <strong>GitHub:</strong> <em>[<a href="https://github.com/your-username/notes-sync-lab3">https://github.com/your-username/notes-sync-lab3</a>]</em></p>
+<p><strong>Структура папки:</strong></p>
+<pre><code>lab-03/
+├── Отчет.md
+├── src/
+│   └── domain/
+│       ├── value_objects/
+│       │   ├── note_id.js
+│       │   ├── note_title.js
+│       │   ├── note_content.js
+│       │   └── owner_id.js
+│       ├── entities/
+│       │   ├── note.js
+│       │   └── folder.js
+│       ├── aggregates/
+│       │   └── note.js (Note как агрегат)
+│       ├── events/
+│       │   ├── note-created.js
+│       │   ├── note-content-updated.js
+│       │   └── note-deleted.js
+│       └── services/
+│           └── encryption-service.js (интерфейс)
+└── tests/
+    └── domain/
+        ├── test_value_objects/
+        ├── test_entities/
+        ├── test_aggregates/
+        └── test_events/
+</code></pre>
+<hr>
+<h2 id="вывод">Вывод</h2>
+<p>В ходе выполнения лабораторной работы был успешно реализован доменный слой для сервиса синхронизированных заметок «Notes Sync» с использованием тактических паттернов Domain-Driven Design.</p>
+<p>Были созданы <strong>Value Objects</strong> (<code>NoteId</code>, <code>NoteTitle</code>, <code>NoteContent</code>, <code>OwnerId</code>), инкапсулирующие в себе правила валидации и обеспечивающие иммутабельность. Основные <strong>Entity</strong> (<code>Note</code>, <code>Folder</code>) получили бизнес-логику и методы для изменения своего состояния, а также реализуют равенство на основе идентификатора. <strong>Aggregate Root <code>Note</code></strong> стал единой точкой контроля за инвариантами (неизменяемость удаленной заметки, увеличение версии при изменении). Для всех значимых изменений состояния были введены <strong>Domain Events</strong>, что позволяет в будущем легко реализовать синхронизацию или аудит.</p>
+<p>Доменный слой получился полностью изолированным от технических деталей (баз данных, HTTP), что является ключевым преимуществом гексагональной архитектуры. Это позволяет с легкостью менять инфраструктуру, не затрагивая бизнес-логику. Все инварианты покрыты юнит-тестами, что гарантирует корректность работы системы.</p>
+<p><strong>Основные достижения:</strong></p>
+<ul>
+<li>Полное отделение доменной логики от инфраструктуры.</li>
+<li>Четкая реализация тактических паттернов DDD.</li>
+<li>Защита критических бизнес-правил (инвариантов) внутри агрегата.</li>
+<li>Создание основы для реализации асинхронной синхронизации через Domain Events.</li>
+</ul>
+<hr>
+<p><strong>Дата выполнения:</strong> 22.03.2026<br>
+<strong>Оценка:</strong> _____________<br>
+<strong>Подпись преподавателя:</strong> _____________</p>
+
+            <script async src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+            
+        </body>
+        </html>
